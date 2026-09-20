@@ -1,0 +1,178 @@
+.recommendations-page {
+  padding-bottom: 40px;
+}
+
+.generate-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 12px 24px;
+  background: var(--gradient-primary);
+  border: 1px solid rgba(0, 242, 254, 0.4);
+  box-shadow: var(--shadow-glow-purple);
+}
+
+.generating-overlay {
+  background: rgba(8, 10, 20, 0.85);
+  backdrop-filter: blur(14px);
+  border-radius: 18px;
+  padding: 40px;
+  margin-bottom: 30px;
+  border: 1px solid rgba(0, 242, 254, 0.35);
+  box-shadow: var(--shadow-glow-cyan);
+}
+
+.icon-purple { color: #c084fc; margin-right: 10px; }
+.icon-teal { color: #00f2fe; margin-right: 10px; }
+.icon-coral { color: #f43f5e; margin-right: 10px; }
+.icon-emerald { color: #00f5a0; margin-right: 10px; }
+
+.summary-card {
+  border-left: 4px solid var(--accent-cyan) !important;
+  background: linear-gradient(135deg, rgba(14, 20, 42, 0.85) 0%, rgba(20, 28, 58, 0.6) 100%) !important;
+}
+
+.summary-card h3 {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 1.4rem;
+}
+
+.summary-text {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: #e2e8f0;
+}
+
+/* AI Biometric & Macro Gauges */
+.ai-biometrics-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.biometric-pill {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.biometric-pill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+}
+
+.biometric-pill.protein::after { background: #00f2fe; }
+.biometric-pill.carbs::after { background: #f59e0b; }
+.biometric-pill.fats::after { background: #f43f5e; }
+.biometric-pill.tdee::after { background: #00f5a0; }
+
+.biometric-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.biometric-value {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.biometric-meter {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.biometric-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 1s ease-in-out;
+}
+
+.biometric-fill.protein { background: linear-gradient(90deg, #00f2fe, #4facfe); }
+.biometric-fill.carbs { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+.biometric-fill.fats { background: linear-gradient(90deg, #f43f5e, #fb7185); }
+.biometric-fill.tdee { background: linear-gradient(90deg, #00f5a0, #00cec9); }
+
+/* Recommendation Cards */
+.rec-item-card {
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.025);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.rec-item-card:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(0, 242, 254, 0.3);
+  transform: translateX(4px);
+}
+
+.rec-tag {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.rec-tag.cyan { background: rgba(0, 242, 254, 0.12); color: #00f2fe; border: 1px solid rgba(0, 242, 254, 0.3); }
+.rec-tag.pink { background: rgba(244, 63, 94, 0.12); color: #f43f5e; border: 1px solid rgba(244, 63, 94, 0.3); }
+.rec-tag.emerald { background: rgba(0, 245, 160, 0.12); color: #00f5a0; border: 1px solid rgba(0, 245, 160, 0.3); }
+
+.split-card {
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.25s ease;
+}
+
+.split-card:hover {
+  border-color: rgba(127, 0, 255, 0.4);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.5);
+}
+
+.split-card.rest {
+  background: rgba(0, 245, 160, 0.04);
+  border-color: rgba(0, 245, 160, 0.25);
+}
+
+.recommendation-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 992px) {
+  .recommendation-grid {
+    grid-template-columns: 1fr;
+  }
+}

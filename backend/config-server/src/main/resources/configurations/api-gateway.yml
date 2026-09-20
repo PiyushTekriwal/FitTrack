@@ -1,0 +1,8 @@
+# Centralized config for api-gateway
+# Services use their own application.yml as primary config
+# This file provides overridable defaults
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,refresh

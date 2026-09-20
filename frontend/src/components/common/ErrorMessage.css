@@ -1,0 +1,33 @@
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 24px;
+  border-left: 4px solid var(--danger);
+  background: rgba(255, 118, 117, 0.05);
+}
+
+.error-icon {
+  font-size: 2rem;
+  color: var(--danger);
+}
+
+.error-content {
+  flex: 1;
+}
+
+.error-content h3 {
+  margin: 0 0 5px 0;
+  color: var(--danger);
+  font-size: 1.1rem;
+}
+
+.error-content p {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.retry-btn {
+  padding: 8px 16px;
+  font-size: 0.9rem;
+}

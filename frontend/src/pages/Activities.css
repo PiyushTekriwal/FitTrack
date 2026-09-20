@@ -1,0 +1,106 @@
+.d-flex { display: flex; }
+.justify-content-between { justify-content: space-between; }
+.align-items-center { align-items: center; }
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .stats-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.stat-mini {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  text-align: center;
+}
+
+.stat-mini .label {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.stat-mini .value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--accent-teal);
+}
+
+.form-card {
+  border: 1px solid var(--accent-purple);
+  box-shadow: 0 0 20px rgba(108, 92, 231, 0.1);
+}
+
+.third {
+  flex: 1;
+}
+
+.modern-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.modern-table th {
+  text-align: left;
+  padding: 15px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.modern-table td {
+  padding: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.modern-table tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.badge-cardio { background: rgba(253, 121, 168, 0.2); color: var(--accent-coral); }
+.badge-strength { background: rgba(108, 92, 231, 0.2); color: var(--accent-purple-light); }
+.badge-flexibility { background: rgba(0, 206, 201, 0.2); color: var(--accent-teal); }
+.badge-sports { background: rgba(255, 177, 66, 0.2); color: #ffb142; }
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.icon-btn.danger {
+  color: var(--text-secondary);
+}
+
+.icon-btn.danger:hover {
+  color: var(--danger);
+  background: rgba(255, 118, 117, 0.1);
+}
+
+.table-responsive {
+  overflow-x: auto;
+}

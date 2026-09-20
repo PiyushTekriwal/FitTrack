@@ -1,0 +1,26 @@
+# Node
+node_modules/
+dist/
+build/
+.npm/
+
+# Java
+target/
+*.class
+*.jar
+*.war
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+.idea/
+*.iml
+.vscode/
+
+# OS and Environment
+.DS_Store
+.env
+*.log
+
+# Docker
+.docker/
+docker-compose.override.yml
