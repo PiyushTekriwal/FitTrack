@@ -23,12 +23,6 @@ spring:
       resourceserver:
         jwt:
           jwk-set-uri: ${KEYCLOAK_JWK_URI:http://keycloak:8180/realms/fitness-platform/protocol/openid-connect/certs}
-  ai:
-    ollama:
-      base-url: ${OLLAMA_BASE_URL:http://ollama:11434}
-      chat:
-        options:
-          model: ${OLLAMA_MODEL:tinyllama}
 eureka:
   client:
     service-url:

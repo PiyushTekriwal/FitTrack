@@ -150,7 +150,7 @@ const Dashboard = () => {
 
           <div className="section-card glass-card">
             <div className="section-header">
-              <h3>AI Recommendation</h3>
+              <h3>Personalized Advice</h3>
               <Link to="/recommendations" className="view-all">View Details</Link>
             </div>
             
@@ -165,7 +165,7 @@ const Dashboard = () => {
               <EmptyState 
                 icon={MdAutoAwesome}
                 title="No recommendations"
-                description="Generate your first AI-powered fitness recommendation."
+                description="Generate your personalized workout and nutrition plan."
                 action={<Link to="/recommendations" className="btn-primary">Generate Now</Link>}
               />
             )}

@@ -9,28 +9,26 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-class AiResponseParserTest {
+class RecommendationParserTest {
 
-    private AiResponseParser parser;
+    private RecommendationParser parser;
 
     @BeforeEach
     void setUp() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
-        parser = new AiResponseParser(mapper);
+        parser = new RecommendationParser(mapper);
     }
 
     @Test
     void testParseResponseWithValidJson() {
-        String json = "```json\n" +
-                "{\n" +
+        String json = "{\n" +
                 "  \"summary\": \"Great job\",\n" +
                 "  \"workoutRecommendations\": [],\n" +
                 "  \"dietRecommendations\": [],\n" +
                 "  \"weeklyPlan\": [],\n" +
                 "  \"recoveryAdvice\": \"Rest well\"\n" +
-                "}\n" +
-                "```";
+                "}";
         
         RecommendationDto dto = parser.parseResponse(json);
         assertNotNull(dto);
@@ -44,7 +42,7 @@ class AiResponseParserTest {
         
         RecommendationDto dto = parser.parseResponse(invalidJson);
         assertNotNull(dto);
-        assertEquals("Recommendations generated but could not be structured properly.", dto.getSummary());
+        assertEquals("Personalized fitness and nutrition recommendation generated.", dto.getSummary());
         assertEquals("This is not json", dto.getRecoveryAdvice());
     }
 }

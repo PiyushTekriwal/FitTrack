@@ -47,7 +47,7 @@
   color: #e2e8f0;
 }
 
-/* AI Biometric & Macro Gauges */
+/* Biometric & Macro Gauges */
 .ai-biometrics-bar {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));

@@ -18,7 +18,7 @@ const Sidebar = () => {
   return (
     <aside className="sidebar">
       <div className="sidebar-brand">
-        <h2>Fit<span className="gradient-text">AI</span></h2>
+        <h2>Fit<span className="gradient-text">Track</span></h2>
       </div>
       
       <nav className="sidebar-nav">
@@ -32,7 +32,7 @@ const Sidebar = () => {
           <MdDirectionsRun /> <span>Activities</span>
         </NavLink>
         <NavLink to="/recommendations" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
-          <MdAutoAwesome /> <span>AI Recommend</span>
+          <MdAutoAwesome /> <span>Recommendations</span>
         </NavLink>
         <NavLink to="/plans" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
           <MdEventNote /> <span>Fitness Plans</span>

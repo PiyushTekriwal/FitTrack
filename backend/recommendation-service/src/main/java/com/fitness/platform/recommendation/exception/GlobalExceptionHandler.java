@@ -11,10 +11,10 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(AiServiceUnavailableException.class)
-    public ResponseEntity<Map<String, String>> handleAiServiceUnavailable(AiServiceUnavailableException ex) {
+    @ExceptionHandler(RecommendationServiceException.class)
+    public ResponseEntity<Map<String, String>> handleRecommendationServiceException(RecommendationServiceException ex) {
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
-            .body(Map.of("error", "AI Service Unavailable", "message", ex.getMessage()));
+            .body(Map.of("error", "Recommendation Service Error", "message", ex.getMessage()));
     }
 
     @ExceptionHandler(FeignException.class)

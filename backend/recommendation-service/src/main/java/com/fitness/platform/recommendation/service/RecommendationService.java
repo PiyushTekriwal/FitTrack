@@ -21,18 +21,18 @@ import java.util.stream.Collectors;
 public class RecommendationService {
     private final UserServiceClient userClient;
     private final ActivityServiceClient activityClient;
-    private final AiRecommendationService aiService;
-    private final AiResponseParser responseParser;
+    private final RuleBasedRecommendationEngine recommendationEngine;
+    private final RecommendationParser responseParser;
     private final RecommendationRepository repository;
     private final ObjectMapper objectMapper;
     
     public RecommendationService(UserServiceClient userClient, ActivityServiceClient activityClient,
-                                 AiRecommendationService aiService,
-                                 AiResponseParser responseParser, RecommendationRepository repository,
+                                 RuleBasedRecommendationEngine recommendationEngine,
+                                 RecommendationParser responseParser, RecommendationRepository repository,
                                  ObjectMapper objectMapper) {
         this.userClient = userClient;
         this.activityClient = activityClient;
-        this.aiService = aiService;
+        this.recommendationEngine = recommendationEngine;
         this.responseParser = responseParser;
         this.repository = repository;
         this.objectMapper = objectMapper;
@@ -59,8 +59,8 @@ public class RecommendationService {
             log.warn("Could not fetch activities for {}: {}", userId, e.getMessage());
         }
         
-        String aiResponse = aiService.generateRecommendation(userProfile, fitnessProfile, recentActivities);
-        RecommendationDto parsed = responseParser.parseResponse(aiResponse);
+        String generatedResponse = recommendationEngine.generateRecommendation(userProfile, fitnessProfile, recentActivities);
+        RecommendationDto parsed = responseParser.parseResponse(generatedResponse);
         
         Recommendation entity = new Recommendation();
         entity.setUserId(userId);
@@ -70,7 +70,7 @@ public class RecommendationService {
         entity.setDietRecommendations(toJson(parsed.getDietRecommendations()));
         entity.setWeeklyPlan(toJson(parsed.getWeeklyPlan()));
         entity.setRecoveryAdvice(parsed.getRecoveryAdvice());
-        entity.setRawAiResponse(aiResponse);
+        entity.setRawAiResponse(generatedResponse);
         entity.setStatus("COMPLETED");
         entity.setCreatedAt(LocalDateTime.now());
         Recommendation saved = repository.save(entity);

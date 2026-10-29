@@ -1,82 +1,33 @@
 package com.fitness.platform.recommendation.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fitness.platform.recommendation.dto.*;
+import com.fitness.platform.recommendation.dto.ActivityDto;
+import com.fitness.platform.recommendation.dto.FitnessProfileDto;
+import com.fitness.platform.recommendation.dto.UserProfileDto;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 
+/**
+ * Deterministic sports-science metabolic calculation engine.
+ * Computes personalized BMR, TDEE, macronutrient splits, workouts,
+ * tailored diet plans, and recovery guidelines based on user biometrics
+ * and recent logged activities.
+ */
 @Service
 @Slf4j
-public class AiRecommendationService {
+public class RuleBasedRecommendationEngine {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final PromptBuilder promptBuilder;
-    private final RestTemplate restTemplate;
-
-    public AiRecommendationService(PromptBuilder promptBuilder) {
-        this.promptBuilder = promptBuilder;
-        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-        factory.setConnectTimeout(1500);
-        factory.setReadTimeout(3500);
-        this.restTemplate = new RestTemplate(factory);
-    }
 
     public String generateRecommendation(UserProfileDto userProfile, FitnessProfileDto fitnessProfile, List<ActivityDto> recentActivities) {
         if (fitnessProfile == null && userProfile != null && userProfile.getFitnessProfile() != null) {
             fitnessProfile = userProfile.getFitnessProfile();
         }
 
-        // 1. Probe real LLM (e.g. Ollama) if online
-        String llmResult = tryGenerateWithOllama(userProfile, fitnessProfile, recentActivities);
-        if (llmResult != null && !llmResult.isBlank()) {
-            log.info("Successfully generated recommendation using local LLM inference engine.");
-            return llmResult;
-        }
+        log.info("Generating personalized sports-science recommendations.");
 
-        // 2. Intelligent Sports-Science Adaptive Metabolic Engine
-        log.info("Employing adaptive clinical sports-science metabolic engine.");
-        return generateAdaptiveSportsScienceRecommendation(userProfile, fitnessProfile, recentActivities);
-    }
-
-    private String tryGenerateWithOllama(UserProfileDto userProfile, FitnessProfileDto fitnessProfile, List<ActivityDto> recentActivities) {
-        try {
-            String prompt = promptBuilder.buildComprehensivePrompt(userProfile, fitnessProfile, recentActivities);
-            Map<String, Object> requestBody = Map.of(
-                    "model", "tinyllama",
-                    "prompt", prompt,
-                    "stream", false,
-                    "format", "json"
-            );
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
-
-            String ollamaUrl = "http://localhost:11434/api/generate";
-            String response = restTemplate.postForObject(ollamaUrl, entity, String.class);
-            if (response != null) {
-                JsonNode root = objectMapper.readTree(response);
-                if (root.has("response")) {
-                    String actualContent = root.get("response").asText();
-                    objectMapper.readTree(actualContent);
-                    return actualContent;
-                }
-            }
-        } catch (Exception e) {
-            log.debug("Local LLM probe skipped: {}", e.getMessage());
-        }
-        return null;
-    }
-
-    private String generateAdaptiveSportsScienceRecommendation(UserProfileDto userProfile, FitnessProfileDto fitnessProfile, List<ActivityDto> recentActivities) {
         String name = (userProfile != null && userProfile.getFirstName() != null && !userProfile.getFirstName().isBlank())
                 ? userProfile.getFirstName()
                 : "Athlete";
@@ -106,6 +57,7 @@ public class AiRecommendationService {
         int totalMinutes = recentActivities != null ? recentActivities.stream().mapToInt(a -> a.getDurationMinutes() != null ? a.getDurationMinutes() : 0).sum() : 0;
         int totalBurned = recentActivities != null ? recentActivities.stream().mapToInt(a -> a.getCaloriesBurned() != null ? a.getCaloriesBurned() : 0).sum() : 0;
 
+        // Physical Activity Level (PAL) Multiplier based on logged workout volume
         double palMultiplier;
         String activityTier;
         if (totalMinutes >= 240 || recentWorkoutsCount >= 5) {
@@ -122,9 +74,11 @@ public class AiRecommendationService {
             activityTier = "Sedentary Baseline";
         }
 
+        // Basal Metabolic Rate (Mifflin-St Jeor equation)
         double bmr = (10.0 * weight) + (6.25 * height) - (5.0 * age) + 5.0;
         double tdee = bmr * palMultiplier;
 
+        // Caloric target and macronutrient allocation based on fitness goal
         double targetCalories;
         double proteinMultiplier;
         double carbPct;
@@ -163,7 +117,7 @@ public class AiRecommendationService {
         int carbGrams = Math.max(20, (int) Math.round((targetCaloriesInt * carbPct) / 4.0));
 
         String summary = String.format(
-                "Hello %s! Based on your biometric profile (%.1f kg, %.0f cm, %s level) and current %s activity tier (%d sessions, %d mins, %d kcal burned in the last 7 days), your metabolic TDEE is calculated at %.0f kcal. For your %s goal, your personalized target is %d kcal/day (%dg Protein, %dg Carbs, %dg Healthy Fats) aligned with %s nutrition.",
+                "Hello %s! Based on your biometric profile (%.1f kg, %.0f cm, %s level) and current %s activity tier (%d sessions, %d mins, %d kcal burned in the last 7 days), your calculated TDEE is %.0f kcal/day. For your %s goal, your personalized daily target is %d kcal/day (%dg Protein, %dg Carbs, %dg Healthy Fats) aligned with %s nutrition.",
                 name, weight, height, level.toLowerCase(), activityTier.toLowerCase(), recentWorkoutsCount, totalMinutes, totalBurned, tdee, goal, targetCaloriesInt, proteinGrams, carbGrams, fatGrams, diet
         );
 
@@ -182,7 +136,7 @@ public class AiRecommendationService {
         try {
             return objectMapper.writeValueAsString(result);
         } catch (Exception e) {
-            log.error("Failed to serialize adaptive recommendation", e);
+            log.error("Failed to serialize recommendation", e);
             return "{}";
         }
     }
@@ -198,7 +152,7 @@ public class AiRecommendationService {
                     "duration", "25 mins",
                     "intensity", "HIGH",
                     "sets", 5, "reps", 1,
-                    "notes", "30s sprint / 60s recovery interval to elevate EPOC post-exercise oxygen consumption."
+                    "notes", "30s sprint / 60s recovery interval to elevate post-exercise metabolic burn."
             ));
             list.add(Map.of(
                     "exercise", "Compound Dumbbell Thrusters & Lunges",
@@ -298,10 +252,10 @@ public class AiRecommendationService {
         if (diet.equalsIgnoreCase("VEGETARIAN") || diet.equalsIgnoreCase("VEGAN")) {
             meals.add(Map.of(
                     "meal", "Power Plant Oats & Chia Bowl",
-                    "description", "Rolled oats simmered with almond milk, chia seeds, walnuts, and organic plant isolate protein",
+                    "description", "Rolled oats simmered with almond milk, chia seeds, walnuts, and plant protein",
                     "calories", cMeal1,
                     "protein", pMeal1 + "g",
-                    "notes", "Complex low-glycemic carbohydrates with rich omega-3 fatty acids for cognitive drive."
+                    "notes", "Complex low-glycemic carbohydrates with rich omega-3 fatty acids."
             ));
             meals.add(Map.of(
                     "meal", "Crispy Tofu & Edamame Quinoa Skillet",
@@ -322,44 +276,44 @@ public class AiRecommendationService {
                     "description", "Slow-cooked golden lentil dal with turmeric, roasted sweet potatoes, and baby spinach",
                     "calories", cMeal3,
                     "protein", pMeal3 + "g",
-                    "notes", "Anti-inflammatory turmeric curcumins to aid overnight connective tissue recovery."
+                    "notes", "Anti-inflammatory turmeric curcumins to aid overnight recovery."
             ));
         } else if (diet.equalsIgnoreCase("KETO")) {
             meals.add(Map.of(
-                    "meal", "Avocado & Spinach Pastured Omelette",
-                    "description", "3 whole pasture-raised eggs cooked in butter with sliced avocado, feta cheese, and wilted spinach",
+                    "meal", "Avocado & Spinach Omelette",
+                    "description", "3 whole eggs cooked in butter with sliced avocado, feta cheese, and wilted spinach",
                     "calories", cMeal1,
                     "protein", pMeal1 + "g",
-                    "notes", "Zero net sugars, high healthy monounsaturated fats to prime ketogenic fat adaptation."
+                    "notes", "Low net sugars, high healthy monounsaturated fats for clean sustained energy."
             ));
             meals.add(Map.of(
                     "meal", "Wild Salmon & Asparagus Bowl",
-                    "description", "Pan-crisped wild salmon fillet over olive oil tossed asparagus, zucchini noodles, and walnuts",
+                    "description", "Pan-crisped salmon fillet over olive oil tossed asparagus, zucchini noodles, and walnuts",
                     "calories", cMeal2,
                     "protein", pMeal2 + "g",
-                    "notes", "Rich in EPA/DHA marine omega-3s to optimize cellular membrane integrity."
+                    "notes", "Rich in EPA/DHA omega-3s to optimize cellular recovery."
             ));
             meals.add(Map.of(
                     "meal", "MCT & Macadamia Energy Boost",
                     "description", "Cold-pressed macadamia nuts, celery sticks with cream cheese, and collagen peptides",
                     "calories", cSnack,
                     "protein", pSnack + "g",
-                    "notes", "Sustained clean ketone production without insulin spikes."
+                    "notes", "Sustained clean energy without insulin spikes."
             ));
             meals.add(Map.of(
-                    "meal", "Grass-Fed Ribeye & Garlic Butter Greens",
-                    "description", "Seared grass-fed steak slices served alongside roasted broccoli florets drizzled with garlic butter",
+                    "meal", "Grass-Fed Steak & Garlic Butter Greens",
+                    "description", "Seared steak slices served alongside roasted broccoli florets drizzled with garlic butter",
                     "calories", cMeal3,
                     "protein", pMeal3 + "g",
-                    "notes", "High zinc, iron, and conjugated linoleic acid for hormonal balance."
+                    "notes", "High zinc, iron, and micronutrients for physical recovery."
             ));
         } else {
             meals.add(Map.of(
                     "meal", "Performance Fuel Breakfast",
-                    "description", "Cage-free scrambled eggs, whole-grain sourdough toast with avocado, and a bowl of fresh berries",
+                    "description", "Scrambled eggs, whole-grain sourdough toast with avocado, and a bowl of fresh berries",
                     "calories", cMeal1,
                     "protein", pMeal1 + "g",
-                    "notes", "Balanced macronutrient release providing steady morning mental clarity and physical energy."
+                    "notes", "Balanced macronutrient release providing steady morning energy."
             ));
             meals.add(Map.of(
                     "meal", "Grilled Herb Chicken & Sweet Potato Plate",
@@ -370,17 +324,17 @@ public class AiRecommendationService {
             ));
             meals.add(Map.of(
                     "meal", "Post-Workout Recovery Shake",
-                    "description", "Whey or pea protein isolate blended with half a banana, cinnamon, and tablespoon of natural peanut butter",
+                    "description", "Whey or pea protein isolate blended with half a banana, cinnamon, and natural peanut butter",
                     "calories", cSnack,
                     "protein", pSnack + "g",
-                    "notes", "Stimulates muscle protein synthesis within the post-workout metabolic window."
+                    "notes", "Supports muscle protein synthesis within the post-workout recovery window."
             ));
             meals.add(Map.of(
                     "meal", "Baked White Fish & Brown Rice Medley",
                     "description", "Herb-crusted white fish fillet with warm brown rice, roasted asparagus, and lemon vinaigrette",
                     "calories", cMeal3,
                     "protein", pMeal3 + "g",
-                    "notes", "Light, easily digestible evening meal to avoid sleep disturbances while supplying micronutrients."
+                    "notes", "Light, easily digestible evening meal supplying essential micronutrients."
             ));
         }
         return meals;
@@ -395,7 +349,7 @@ public class AiRecommendationService {
                     Map.of("day", "Thursday", "workout", "Dynamic Joint Mobility & Postural Yoga", "diet", "Digestive Rest & Moderate Caloric Intake", "rest", true),
                     Map.of("day", "Friday", "workout", "Full Body Functional Strength (Session C)", "diet", "Glycogen Replenishment Post-Training", "rest", false),
                     Map.of("day", "Saturday", "workout", "Light Cardio / Recreational Swimming or Cycling", "diet", "Protein & Healthy Fats Satiety", "rest", false),
-                    Map.of("day", "Sunday", "workout", "Complete CNS Rest & Foam Rolling", "diet", "Tissue Repair & Regeneration Micronutrients", "rest", true)
+                    Map.of("day", "Sunday", "workout", "Complete Rest & Mobility Stretching", "diet", "Tissue Repair & Regeneration Micronutrients", "rest", true)
             );
         } else {
             return List.of(
@@ -405,7 +359,7 @@ public class AiRecommendationService {
                     Map.of("day", "Thursday", "workout", "Active Recovery / Low-Intensity Mobility", "diet", "Moderate Caloric Maintenance", "rest", true),
                     Map.of("day", "Friday", "workout", "Posterior Chain & Unilateral Strength", "diet", "Glycogen Replenishment Post-Workout", "rest", false),
                     Map.of("day", "Saturday", "workout", "High-Intensity Functional Conditioning (HIIT)", "diet", "Electrolytes & High Protein Dinner", "rest", false),
-                    Map.of("day", "Sunday", "workout", "Complete Rest & Myofascial Release", "diet", "Cellular Repair & Sleep Optimization", "rest", true)
+                    Map.of("day", "Sunday", "workout", "Complete Rest & Foam Rolling", "diet", "Cellular Repair & Sleep Optimization", "rest", true)
             );
         }
     }
@@ -414,17 +368,17 @@ public class AiRecommendationService {
         double recommendedWater = weight * 0.038;
         if (recentWorkoutsCount >= 4 || totalMinutes >= 180) {
             return String.format(
-                    "High training volume detected (%d sessions, %d mins logged). Prioritize 8.0 to 8.5 hours of sleep for growth hormone and CNS restoration. Hydrate with at least %.1f L of water daily plus electrolytes. Schedule non-weight-bearing recovery days to avoid overreaching.",
+                    "High training volume detected (%d sessions, %d mins logged). Prioritize 8.0 to 8.5 hours of sleep for physical restoration. Hydrate with at least %.1f L of water daily plus electrolytes. Schedule non-weight-bearing recovery days to avoid overreaching.",
                     recentWorkoutsCount, totalMinutes, recommendedWater
             );
         } else if (recentWorkoutsCount >= 1) {
             return String.format(
-                    "Solid training rhythm (%d session logged). Ensure 7.5 to 8.0 hours of quality sleep to facilitate tissue adaptation. Aim for %.1f L of fluid daily. Continue progressive loading with 48 hours between strenuous sessions on the same muscle groups.",
+                    "Solid training rhythm (%d sessions logged). Ensure 7.5 to 8.0 hours of quality sleep to facilitate tissue adaptation. Aim for %.1f L of fluid daily. Continue progressive loading with 48 hours between strenuous sessions on the same muscle groups.",
                     recentWorkoutsCount, recommendedWater
             );
         } else {
             return String.format(
-                    "Fresh baseline state (no recent fatigue accumulated). Ideal window to initiate progressive loading. Aim for 7.5 to 8 hours of sleep and %.1f L of daily water intake. Begin with moderate volume and prioritize warm-up mobility before high-intensity efforts.",
+                    "Fresh baseline state. Ideal window to initiate progressive training. Aim for 7.5 to 8 hours of sleep and %.1f L of daily water intake. Begin with moderate volume and prioritize warm-up mobility before high-intensity efforts.",
                     recommendedWater
             );
         }

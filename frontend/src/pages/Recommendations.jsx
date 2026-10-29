@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
-import { MdAutoAwesome, MdFitnessCenter, MdRestaurant, MdCalendarToday, MdFavorite, MdElectricBolt, MdSpeed, MdShield } from 'react-icons/md';
+import { MdFitnessCenter, MdRestaurant, MdCalendarToday, MdFavorite, MdElectricBolt, MdSpeed, MdShield } from 'react-icons/md';
 import { generateRecommendation, getLatestRecommendation } from '../services/recommendationService';
 import { createPlan } from '../services/planService';
 import { getUserFitnessProfile } from '../services/userService';
@@ -52,7 +52,7 @@ const Recommendations = () => {
     try {
       const res = await generateRecommendation('COMPREHENSIVE');
       setRecommendation(res.data);
-      toast.success('AI Neural Engine synthesized new recommendations!');
+      toast.success('Generated new personalized recommendations!');
     } catch (err) {
       toast.error('Failed to generate recommendation. Please try again.');
     } finally {
@@ -64,14 +64,14 @@ const Recommendations = () => {
     if (!recommendation) return;
     try {
       const planData = {
-        name: `AI Neural Plan - ${new Date().toLocaleDateString()}`,
+        name: `Personalized Training Plan - ${new Date().toLocaleDateString()}`,
         description: recommendation.summary,
         startDate: new Date().toISOString(),
         endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
         items: []
       };
       await createPlan(planData);
-      toast.success('Active fitness plan synced from AI Engine!');
+      toast.success('Active fitness plan created successfully!');
     } catch (err) {
       toast.error('Failed to create fitness plan');
     }
@@ -86,7 +86,7 @@ const Recommendations = () => {
   const carbsTarget = Math.round((tdeeEstimate * 0.45) / 4);
   const fatsTarget = Math.round((tdeeEstimate * 0.25) / 9);
 
-  if (loading) return <LoadingSpinner message="Querying AI Neural Cache..." />;
+  if (loading) return <LoadingSpinner message="Loading recommendations..." />;
 
   return (
     <div className="recommendations-page animate-slide-up">
@@ -94,24 +94,24 @@ const Recommendations = () => {
         <div>
           <div className="ai-status-badge mb-2" style={{ marginBottom: '10px' }}>
             <span className="ai-pulse-dot"></span>
-            <span>AI ENGINE ONLINE • CACHE OPTIMIZED</span>
+            <span>RECOMMENDATION ENGINE ONLINE • CACHED</span>
           </div>
-          <h2>Neural Recommendations</h2>
-          <p style={{ color: 'var(--text-secondary)' }}>Personalized fitness heuristics and metabolic intelligence tailored to your body.</p>
+          <h2>Personalized Recommendations</h2>
+          <p style={{ color: 'var(--text-secondary)' }}>Scientifically calibrated workout routines and macronutrient targets based on your biometric profile and activity history.</p>
         </div>
         <button 
           className="btn-primary generate-btn" 
           onClick={handleGenerate} 
           disabled={generating}
         >
-          <MdAutoAwesome style={{ fontSize: '1.2rem', color: '#00f2fe' }} /> 
-          {generating ? 'Synthesizing Biometrics...' : 'Re-synthesize Advice'}
+          <MdFitnessCenter style={{ fontSize: '1.2rem', color: '#00f2fe' }} /> 
+          {generating ? 'Calculating Targets...' : 'Recalculate Plan'}
         </button>
       </div>
 
       {generating && (
         <div className="generating-overlay">
-          <LoadingSpinner message="Neural engine analyzing caloric expenditure, heart rate distribution, and nutritional macro targets..." />
+          <LoadingSpinner message="Calculating caloric expenditure, metabolic rate, and macronutrient targets..." />
         </div>
       )}
 
@@ -120,11 +120,11 @@ const Recommendations = () => {
       ) : recommendation ? (
         <div className="recommendation-content">
 
-          {/* AI Biometric & Fuel Radar Bar */}
+          {/* Biometric & Macronutrient Breakdown Bar */}
           <div className="ai-biometrics-bar">
             <div className="biometric-pill tdee">
               <div className="biometric-header">
-                <span>Metabolic Radar</span>
+                <span>Estimated TDEE</span>
                 <MdElectricBolt style={{ color: '#00f5a0' }} />
               </div>
               <div className="biometric-value">{tdeeEstimate} <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: 500 }}>kcal/day</span></div>
@@ -135,7 +135,7 @@ const Recommendations = () => {
 
             <div className="biometric-pill protein">
               <div className="biometric-header">
-                <span>Protein Fuel Target</span>
+                <span>Daily Protein Target</span>
                 <MdShield style={{ color: '#00f2fe' }} />
               </div>
               <div className="biometric-value">{proteinTarget}g <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: 500 }}>/day</span></div>
@@ -146,7 +146,7 @@ const Recommendations = () => {
 
             <div className="biometric-pill carbs">
               <div className="biometric-header">
-                <span>Carb Energy Allocation</span>
+                <span>Carbohydrate Fuel</span>
                 <MdSpeed style={{ color: '#f59e0b' }} />
               </div>
               <div className="biometric-value">{carbsTarget}g <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: 500 }}>/day</span></div>
@@ -157,7 +157,7 @@ const Recommendations = () => {
 
             <div className="biometric-pill fats">
               <div className="biometric-header">
-                <span>Essential Lipids</span>
+                <span>Essential Healthy Fats</span>
                 <MdFavorite style={{ color: '#f43f5e' }} />
               </div>
               <div className="biometric-value">{fatsTarget}g <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: 500 }}>/day</span></div>
@@ -167,16 +167,16 @@ const Recommendations = () => {
             </div>
           </div>
 
-          {/* AI Coach Summary Card */}
+          {/* Coach Summary Card */}
           <div className="glass-card mb-4 summary-card">
-            <h3><MdAutoAwesome className="icon-teal" /> AI Executive Synthesis</h3>
+            <h3><MdFitnessCenter className="icon-teal" /> Personalized Plan Summary</h3>
             <p className="summary-text">
               {recommendation.summary}
             </p>
             {recommendation.recoveryAdvice && (
               <div style={{ marginTop: '18px', padding: '16px', background: 'rgba(0, 242, 254, 0.05)', borderRadius: '12px', border: '1px solid rgba(0, 242, 254, 0.2)' }}>
                 <strong style={{ color: '#00f2fe', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <MdFavorite /> Recovery & Neural Rest Optimization:
+                  <MdFavorite /> Recovery & Rest Guidelines:
                 </strong>
                 <p style={{ marginTop: '8px', fontSize: '0.95rem', color: '#cbd5e1', lineHeight: '1.6' }}>{recommendation.recoveryAdvice}</p>
               </div>
@@ -192,7 +192,7 @@ const Recommendations = () => {
           <div className="recommendation-grid" style={{ marginBottom: '24px' }}>
             <div className="glass-card">
               <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '18px' }}>
-                <MdFitnessCenter style={{ color: '#00f2fe' }} /> Targeted Neural Protocols
+                <MdFitnessCenter style={{ color: '#00f2fe' }} /> Recommended Workouts
               </h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {Array.isArray(recommendation.workoutRecommendations) && recommendation.workoutRecommendations.length > 0 ? (
@@ -213,7 +213,7 @@ const Recommendations = () => {
 
             <div className="glass-card">
               <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '18px' }}>
-                <MdRestaurant style={{ color: '#f43f5e' }} /> Precision Nutrition Fuel
+                <MdRestaurant style={{ color: '#f43f5e' }} /> Nutrition & Meal Guide
               </h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {Array.isArray(recommendation.dietRecommendations) && recommendation.dietRecommendations.length > 0 ? (
@@ -238,7 +238,7 @@ const Recommendations = () => {
           {Array.isArray(recommendation.weeklyPlan) && recommendation.weeklyPlan.length > 0 && (
             <div className="glass-card">
               <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '18px' }}>
-                <MdCalendarToday style={{ color: '#c084fc' }} /> 7-Day Neural Training & Nutrition Periodization
+                <MdCalendarToday style={{ color: '#c084fc' }} /> 7-Day Training & Nutrition Schedule
               </h3>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '14px' }}>
                 {recommendation.weeklyPlan.map((day, idx) => (
@@ -261,10 +261,10 @@ const Recommendations = () => {
         </div>
       ) : (
         <EmptyState 
-          icon={MdAutoAwesome}
-          title="No Neural Recommendations Available"
-          description="Initiate the AI synthesis engine to evaluate your biometrics and output hyper-personalized workout and nutrition blueprints."
-          action={<button className="btn-primary" onClick={handleGenerate}><MdAutoAwesome /> Synthesize Now</button>}
+          icon={MdFitnessCenter}
+          title="No Recommendations Available Yet"
+          description="Generate your personalized workout routines and nutrition plan tailored to your body weight, height, and activity level."
+          action={<button className="btn-primary" onClick={handleGenerate}><MdFitnessCenter /> Generate Plan Now</button>}
         />
       )}
     </div>
@@ -272,4 +272,3 @@ const Recommendations = () => {
 };
 
 export default Recommendations;
-

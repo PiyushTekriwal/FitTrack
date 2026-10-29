@@ -5,23 +5,24 @@ import com.fitness.platform.recommendation.dto.RecommendationDto;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AiResponseParser {
+public class RecommendationParser {
     private final ObjectMapper objectMapper;
     
-    public AiResponseParser(ObjectMapper objectMapper) {
+    public RecommendationParser(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
     
-    public RecommendationDto parseResponse(String aiResponse) {
+    public RecommendationDto parseResponse(String rawResponse) {
         try {
-            String json = extractJson(aiResponse);
+            String json = extractJson(rawResponse);
             return objectMapper.readValue(json, RecommendationDto.class);
         } catch (Exception e) {
-            return createFallbackRecommendation(aiResponse);
+            return createFallbackRecommendation(rawResponse);
         }
     }
     
     private String extractJson(String text) {
+        if (text == null) return "{}";
         int start = text.indexOf('{');
         int end = text.lastIndexOf('}');
         if (start >= 0 && end > start) {
@@ -32,7 +33,7 @@ public class AiResponseParser {
     
     private RecommendationDto createFallbackRecommendation(String rawText) {
         RecommendationDto fallback = new RecommendationDto();
-        fallback.setSummary("Recommendations generated but could not be structured properly.");
+        fallback.setSummary("Personalized fitness and nutrition recommendation generated.");
         fallback.setRecoveryAdvice(rawText);
         return fallback;
     }

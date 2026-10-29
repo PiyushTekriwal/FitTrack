@@ -5,7 +5,7 @@ Start-Process "java.exe" -ArgumentList "-Dspring.profiles.active=local", "-jar",
 Start-Sleep -Seconds 12
 
 Write-Host "Starting Config Server..."
-Start-Process "java.exe" -ArgumentList "-Dspring.profiles.active=local", "-jar", "$RootPath\backend\config-server\target\config-server-0.0.1-SNAPSHOT.jar"
+Start-Process "java.exe" -ArgumentList "-Dspring.profiles.active=local,native", "-jar", "$RootPath\backend\config-server\target\config-server-0.0.1-SNAPSHOT.jar"
 Start-Sleep -Seconds 8
 
 Write-Host "Starting Domain Services..."
