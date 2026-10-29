@@ -37,7 +37,7 @@ const Navbar = () => {
     if (path === '/') return 'Dashboard';
     if (path.startsWith('/profile')) return 'Profile';
     if (path.startsWith('/activities')) return 'Activities';
-    if (path.startsWith('/recommendations')) return 'AI Recommendations';
+    if (path.startsWith('/recommendations')) return 'Recommendations';
     if (path.startsWith('/plans')) return 'Fitness Plans';
     if (path.startsWith('/admin')) return 'Admin Panel';
     return 'Dashboard';
@@ -64,3 +64,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+

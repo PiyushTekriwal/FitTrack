@@ -1,4 +1,4 @@
-const STORAGE_KEY = "fitai_user_session";
+const STORAGE_KEY = "fittrack_user_session";
 
 export const getStoredUser = () => {
   try {
@@ -28,3 +28,4 @@ export const hasRole = (role) => {
   const user = getStoredUser();
   return user.roles && user.roles.includes(role);
 };
+

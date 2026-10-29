@@ -1,5 +1,5 @@
 {
-  "name": "fitness-platform-frontend",
+  "name": "fittrack-frontend",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -25,3 +25,4 @@
     "vite": "^5.1.0"
   }
 }
+
