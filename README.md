@@ -16,7 +16,7 @@ graph TD
     US --> DB1[(MySQL / H2)]
     PS --> DB1
     RS --> DB1
-    AS --> MongoDB[(MongoDB :27017)]
+    AS --> DB1
     
     RS -.->|Feign Client| US
     RS -.->|Feign Client| AS
@@ -38,7 +38,7 @@ graph TD
 - **Microservices Architecture**: Decentralized architecture using **Spring Cloud Gateway**, **Eureka Discovery Server**, and **Spring Cloud Config Server**.
 - **Personalized Recommendation Engine**: Deterministic sports-science engine utilizing the **Mifflin-St Jeor equation** and Physical Activity Level (PAL) multipliers to calculate Basal Metabolic Rate (BMR), Total Daily Energy Expenditure (TDEE), and goal-oriented macronutrient allocations (Protein, Carbs, Healthy Fats).
 - **In-Memory Caching**: Integrated **Spring Cache** (`@EnableCaching`, `@Cacheable`, `@CacheEvict`) across microservices to minimize repetitive database queries and Feign inter-service calls.
-- **Activity & Metric Tracking**: High-throughput workout and cardio logging stored in **MongoDB** with flexible document schemas and statistical aggregation.
+- **Activity & Metric Tracking**: High-throughput workout and cardio logging stored with Spring Data JPA and relational schema integrity and statistical aggregation.
 - **Fitness Plan Management**: 7-day periodized workout and nutritional scheduling with progression tracking.
 - **Modern Cyber UI**: Cyber dark responsive dashboard built with **React**, **Vite**, modern CSS glassmorphism, and interactive metric gauges.
 
@@ -46,7 +46,7 @@ graph TD
 
 - **Backend**: Java 21, Spring Boot 3.2.5, Spring Cloud 2023.0.1 (Eureka, Config, Gateway, OpenFeign)
 - **Caching**: Spring Cache Abstraction
-- **Databases**: MySQL / H2 In-Memory (JPA / Hibernate), MongoDB (Spring Data Mongo)
+- **Databases**: MySQL / H2 In-Memory (Spring Data JPA / Hibernate)
 - **Frontend**: React 18, Vite, React Icons, React Hot Toast
 - **Build Tools**: Apache Maven 3.9, Node.js
 
@@ -58,7 +58,7 @@ graph TD
 | `config-server` | 8888 | Centralized configuration management |
 | `api-gateway` | 8080 | Single entry point routing requests to microservices |
 | `user-service` | 8081 | Manages user profiles and biometric data |
-| `activity-service` | 8082 | Workout logging and statistical analytics (MongoDB) |
+| `activity-service` | 8082 | Workout logging and statistical analytics |
 | `recommendation-service` | 8083 | Calculates personalized metabolic targets, diet plans, and workouts |
 | `plan-service` | 8084 | Manages workout plans and completion statuses |
 | `frontend` | 5173 | React single-page application |
@@ -91,3 +91,4 @@ This starts:
 ```powershell
 .\stop-local.ps1
 ```
+

@@ -5,7 +5,6 @@ import com.fitness.platform.activity.dto.ActivityDto;
 import com.fitness.platform.activity.dto.ActivityStatsDto;
 import com.fitness.platform.activity.dto.CreateActivityRequest;
 import com.fitness.platform.activity.dto.PagedResponse;
-import com.fitness.platform.activity.event.WorkoutCompletedEvent;
 import com.fitness.platform.activity.exception.AccessDeniedException;
 import com.fitness.platform.activity.exception.ResourceNotFoundException;
 import com.fitness.platform.activity.repository.ActivityRepository;
@@ -33,7 +32,6 @@ import java.util.stream.Collectors;
 public class ActivityService {
 
     private final ActivityRepository activityRepository;
-    private final ActivityEventPublisher eventPublisher;
 
     @Transactional
     @CacheEvict(value = {"activityStats", "recentActivities"}, allEntries = true)
@@ -55,16 +53,7 @@ public class ActivityService {
                 
         Activity savedActivity = activityRepository.save(activity);
         
-        eventPublisher.publishWorkoutCompletedEvent(
-                WorkoutCompletedEvent.builder()
-                        .userId(userId)
-                        .activityId(String.valueOf(savedActivity.getId()))
-                        .activityType(savedActivity.getActivityType())
-                        .caloriesBurned(savedActivity.getCaloriesBurned())
-                        .timestamp(LocalDateTime.now())
-                        .build()
-        );
-        
+                
         return mapToDto(savedActivity);
     }
 
@@ -221,3 +210,4 @@ public class ActivityService {
                 .build();
     }
 }
+

@@ -3,7 +3,6 @@ package com.fitness.platform.user.service;
 import com.fitness.platform.user.dto.*;
 import com.fitness.platform.user.entity.FitnessProfile;
 import com.fitness.platform.user.entity.UserProfile;
-import com.fitness.platform.user.event.ProfileEventPublisher;
 import com.fitness.platform.user.repository.FitnessProfileRepository;
 import com.fitness.platform.user.repository.UserProfileRepository;
 import org.springframework.cache.annotation.CacheEvict;
@@ -18,12 +17,10 @@ public class UserProfileService {
 
     private final UserProfileRepository userProfileRepository;
     private final FitnessProfileRepository fitnessProfileRepository;
-    private final ProfileEventPublisher eventPublisher;
 
-    public UserProfileService(UserProfileRepository userProfileRepository, FitnessProfileRepository fitnessProfileRepository, ProfileEventPublisher eventPublisher) {
+    public UserProfileService(UserProfileRepository userProfileRepository, FitnessProfileRepository fitnessProfileRepository) {
         this.userProfileRepository = userProfileRepository;
         this.fitnessProfileRepository = fitnessProfileRepository;
-        this.eventPublisher = eventPublisher;
     }
 
     @Transactional
@@ -80,8 +77,6 @@ public class UserProfileService {
         
         fitnessProfileRepository.save(fitnessProfile);
         userProfileRepository.save(userProfile);
-        
-        eventPublisher.publishProfileUpdated(userId);
         return mapFitnessToDto(fitnessProfile);
     }
 
@@ -115,3 +110,4 @@ public class UserProfileService {
         return dto;
     }
 }
+

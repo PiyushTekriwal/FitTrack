@@ -3,7 +3,6 @@ package com.fitness.platform.plan.service;
 import com.fitness.platform.plan.dto.CreatePlanRequest;
 import com.fitness.platform.plan.dto.FitnessPlanDto;
 import com.fitness.platform.plan.entity.FitnessPlan;
-import com.fitness.platform.plan.event.PlanEventPublisher;
 import com.fitness.platform.plan.repository.FitnessPlanRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,9 +20,6 @@ class PlanServiceTest {
 
     @Mock
     private FitnessPlanRepository planRepository;
-    
-    @Mock
-    private PlanEventPublisher eventPublisher;
 
     @InjectMocks
     private PlanService planService;
@@ -46,8 +42,7 @@ class PlanServiceTest {
 
         FitnessPlanDto dto = planService.createPlan("user1", req);
         assertEquals("Test Plan", dto.getName());
-        verify(eventPublisher).publishPlanGenerated("user1", 1L);
-    }
+            }
     
     @Test
     void testGetPlanById_NotFound() {
@@ -55,3 +50,4 @@ class PlanServiceTest {
         assertThrows(Exception.class, () -> planService.getPlanById(1L, "user1"));
     }
 }
+

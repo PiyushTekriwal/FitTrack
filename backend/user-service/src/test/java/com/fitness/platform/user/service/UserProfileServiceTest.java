@@ -3,7 +3,6 @@ package com.fitness.platform.user.service;
 import com.fitness.platform.user.dto.UpdateProfileRequest;
 import com.fitness.platform.user.dto.UserProfileDto;
 import com.fitness.platform.user.entity.UserProfile;
-import com.fitness.platform.user.event.ProfileEventPublisher;
 import com.fitness.platform.user.repository.FitnessProfileRepository;
 import com.fitness.platform.user.repository.UserProfileRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,9 +24,6 @@ class UserProfileServiceTest {
     
     @Mock
     private FitnessProfileRepository fitnessProfileRepository;
-    
-    @Mock
-    private ProfileEventPublisher eventPublisher;
 
     @InjectMocks
     private UserProfileService userProfileService;
@@ -62,3 +58,4 @@ class UserProfileServiceTest {
         verify(userProfileRepository).save(profile);
     }
 }
+

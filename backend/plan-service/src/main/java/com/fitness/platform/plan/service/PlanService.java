@@ -3,7 +3,6 @@ package com.fitness.platform.plan.service;
 import com.fitness.platform.plan.dto.*;
 import com.fitness.platform.plan.entity.FitnessPlan;
 import com.fitness.platform.plan.entity.FitnessPlanItem;
-import com.fitness.platform.plan.event.PlanEventPublisher;
 import com.fitness.platform.plan.repository.FitnessPlanRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -19,11 +18,9 @@ import java.util.stream.Collectors;
 public class PlanService {
     
     private final FitnessPlanRepository planRepository;
-    private final PlanEventPublisher eventPublisher;
 
-    public PlanService(FitnessPlanRepository planRepository, PlanEventPublisher eventPublisher) {
+    public PlanService(FitnessPlanRepository planRepository) {
         this.planRepository = planRepository;
-        this.eventPublisher = eventPublisher;
     }
 
     @Transactional
@@ -58,9 +55,7 @@ public class PlanService {
         plan.setTotalItems(items.size());
         plan.setCompletedItems(0);
         
-        FitnessPlan savedPlan = planRepository.save(plan);
-        eventPublisher.publishPlanGenerated(userId, savedPlan.getId());
-        
+        FitnessPlan savedPlan = planRepository.save(plan);        
         return mapToDto(savedPlan);
     }
 
@@ -144,3 +139,4 @@ public class PlanService {
         return dto;
     }
 }
+
